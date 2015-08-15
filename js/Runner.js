@@ -1,5 +1,5 @@
 function Runner(){
-	this.size = V.H/10;
+	this.size = V.scale;
 	this.x = V.W/2;
 	this.y = V.H/2;
 	this.up = 20
@@ -178,13 +178,13 @@ Runner.prototype.draw = function(){
 	else if(this.timer<this.maxAnim*2)
 		this.move("run", -1);
 	else if(this.timer<this.maxAnim*4){
-		this.updatePosition(0,-4);
+		this.updatePosition(0,-6);
 		this.move("jump" , 1);
 	}
 	else if(this.timer<this.maxAnim*6){
 	}
 	else if(this.timer<this.maxAnim*8){
-		this.updatePosition(0,4);
+		this.updatePosition(0,6);
 		this.move("jump" , -1);
 	}
 	else{

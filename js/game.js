@@ -35,6 +35,7 @@ V = {
     W:0,
     H:0,
     fps:60+10,
+    scale: 50,
     rand:function(min,max){
       return Math.floor(Math.random()*(max-min+1))+min;
     },
@@ -62,6 +63,7 @@ Game = {
     document.body.appendChild(canvas);
     window.addEventListener('keydown', Game.onKey, false);
 
+    object = new Obstacle('rectangle');
     tester = new Runner();
     tester.draw();
 
@@ -85,7 +87,8 @@ Game = {
         ctx.strokeRect(V.W/2-200, V.H/2, 400, 100);
         //PLAY LOOP
         tester.draw();
-        //tester.x++;
+        object.draw();
+
 
     }, 1000/V.fps);
   },
