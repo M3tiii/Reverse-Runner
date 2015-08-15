@@ -41,8 +41,8 @@ V = {
     rotate:function(ox,oy,angle, px, py){
       
       angle = (-angle) * (Math.PI/180);
-      nx = Math.round(Math.cos(angle) * (px-ox) - Math.sin(angle) * (py-oy) + ox);
-      ny = Math.round(Math.sin(angle) * (px-ox) + Math.cos(angle) * (py-oy) + oy);
+      nx = Math.round((Math.cos(angle) * (px-ox) - Math.sin(angle) * (py-oy) + ox)*100)/100;
+      ny = Math.round((Math.sin(angle) * (px-ox) + Math.cos(angle) * (py-oy) + oy)*100)/100;
       //console.log(ox,oy,angle, px, py, "Wynik", nx, ny);
       return {x:nx, y:ny};
     },
