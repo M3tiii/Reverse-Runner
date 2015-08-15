@@ -5,45 +5,61 @@ function Runner(){
 	this.up = 20
 	this.state('stay');
 	this.timer = 0;
-	// test = ( V.rotate(this.upBodyX,this.upBodyY,20,this.rightArmX, this.rightArmY) );
-	// this.rightArmX = test.x;
-	// this.rightArmY = test.y;
 
+	this.freqAnim = 1;
+	this.maxAnim = 10;
 
 	this.bodies = {
 		name:["Feet","Knee","downBody","Hand","Arm","upBody"],
 		Feet:0,
 		Knee:1,
+		downBody:2,
 		Hand:3,
 		Arm:4,
-		downBody:2,
 		upBody:5,
 	}
+
+	this.state('stay');
 		
 }
-Runner.prototype.test = function(side, prev, sx, sy){
+Runner.prototype.shift = function(side, prev, sx, sy){
 	this[side+prev+["X"]] += sx;
 	this[side+prev+["Y"]] += sy;
+
 }
 Runner.prototype.rotate = function(side, part, angle){
-	var next = this.bodies.name[this.bodies[part]+1];
-	var prev = this.bodies.name[this.bodies[part]-1];
+	
+	
 	//console.log(this[next+"X"]);
 	//console.log(prev);
 	//this[side+part+vertical]
 	//this.rotate( this[side+next+"X"], this[side+next+"Y"], angle, this[side+part+"X"], this[side+part+"Y"] )
-	if(this.bodies[part] == 1 || this.bodies[part] == 4)
-		var tmp = V.rotate( this[next+"X"], this[next+"Y"], angle, this[side+part+"X"], this[side+part+"Y"] )
-	else
-		var tmp = V.rotate( this[side+next+"X"], this[side+next+"Y"], angle, this[side+part+"X"], this[side+part+"Y"] )
-	var prevX = tmp.x - this[side+part+["X"]];
-	var prevY = tmp.y - this[side+part+["Y"]];
-	this[side+part+["X"]] = tmp.x;
-	this[side+part+["Y"]] = tmp.y;
-	if(prev){
-		//console.log("A")
-		//this.rotate(side, prev, angle);
-		this.test(side, prev, prevX, prevY);
+	if(part == "Body"){
+
+		// var tmp = V.rotate( this.downBodyX, this.downBodyY, angle/2, this.midBodyX, this.midBodyY );
+		// this.midBodyX = tmp.x;
+		// this.midBodyY = tmp.y;
+		var tmp = V.rotate( this.midBodyX, this.midBodyY, angle, this.upBodyX, this.upBodyY );
+		this.upBodyX = tmp.x;
+		this.upBodyY = tmp.y;
+	}else{
+		var next = this.bodies.name[this.bodies[part]+1];
+		var prev = this.bodies.name[this.bodies[part]-1];
+		//console.log(prev, side + part, next);
+
+		if(this.bodies[part] == 1 || this.bodies[part] == 4)
+			var tmp = V.rotate( this[next+"X"], this[next+"Y"], angle, this[side+part+"X"], this[side+part+"Y"] )
+		else
+			var tmp = V.rotate( this[side+next+"X"], this[side+next+"Y"], angle, this[side+part+"X"], this[side+part+"Y"] )
+		var prevX = tmp.x - this[side+part+["X"]];
+		var prevY = tmp.y - this[side+part+["Y"]];
+		this[side+part+["X"]] = tmp.x;
+		this[side+part+["Y"]] = tmp.y;
+		if(prev){
+			//console.log("A")
+			//this.rotate(side, prev, angle);
+			this.shift(side, prev, prevX, prevY);
+		}
 	}
 }
 
@@ -85,48 +101,104 @@ Runner.prototype.state = function(type){
 			break;
 	}
 }
-Runner.prototype.move = function(type){
+Runner.prototype.updatePosition = function(x, y){
+	this.leftFeetX += x;
+	this.leftFeetY += y;
+
+	this.rightFeetX += x;
+	this.rightFeetY += y;
+
+	this.leftKneeX += x;
+	this.leftKneeY += y;
+
+	this.rightKneeX += x;
+	this.rightKneeY += y;
+
+	this.downBodyX += x;
+	this.downBodyY += y;
+
+	this.midBodyX += x;
+	this.midBodyY += y;
+
+	this.upBodyX += x;
+	this.upBodyY += y;
+
+	this.leftArmX += x;
+	this.leftArmY += y;
+
+	this.rightArmX += x;
+	this.rightArmY += y;
+
+	this.leftHandX += x;
+	this.leftHandY += y;
+
+	this.rightHandX += x;
+	this.rightHandY += y;
+
+}
+Runner.prototype.move = function(type, i){
 	//console.log(V.H, this.size);
 	switch(type){
-		case 1:
-			this.rotate("left","Knee",8);
-			this.rotate("left","Feet",5);
-			this.rotate("right","Knee",-8);
-			this.rotate("right","Feet",-12);
+		case "run":
+			this.rotate("left","Knee",8 * i);
+			this.rotate("left","Feet",5 * i);
+			this.rotate("right","Knee",-8 * i);
+			this.rotate("right","Feet",-12 * i);
 
-			this.rotate("right","Arm",-6);
-			this.rotate("right","Hand",-5);
-			this.rotate("left","Arm",6);
-			this.rotate("left","Hand",12);
+			this.rotate("","Body",1 * i);
+			
+
+			this.rotate("right","Arm",-6 * i);
+			this.rotate("right","Hand",-5 * i);
+			this.rotate("left","Arm",6 * i);
+			this.rotate("left","Hand",12 * i);
 			
 			break;
-		case 2:
-			this.rotate("left","Knee",-8);
-			this.rotate("left","Feet",-5);
-			this.rotate("right","Knee",8);
-			this.rotate("right","Feet",+12);
+		case "jump":
+			this.rotate("left","Knee",-8 * i);
+			this.rotate("left","Feet",-10 * i);
+			this.rotate("right","Knee",-5 * i);
+			this.rotate("right","Feet",-8 * i);
 
-			this.rotate("right","Arm",6);
-			this.rotate("right","Hand",5);
-			this.rotate("left","Arm",-6);
-			this.rotate("left","Hand",-12);
+			//this.rotate("","Body",-1);
+
+			this.rotate("right","Arm",5 * i);
+			this.rotate("right","Hand",10 * i);
+			this.rotate("left","Arm",-5 * i);
+			this.rotate("left","Hand",-10 * i);
 			break;
-		
-		
 	}
 }
 Runner.prototype.draw = function(){
 	//this.x++;
 	
-	if(this.timer<10)
-		this.move(1);
-	else if(this.timer<20)
-		this.move(2);
+
+	if(this.timer<this.maxAnim)
+		this.move("run" , 1);
+	else if(this.timer<this.maxAnim*2)
+		this.move("run", -1);
+	else if(this.timer<this.maxAnim*4){
+		this.updatePosition(0,-4);
+		this.move("jump" , 1);
+	}
+	else if(this.timer<this.maxAnim*6){
+	}
+	else if(this.timer<this.maxAnim*8){
+		this.updatePosition(0,4);
+		this.move("jump" , -1);
+	}
 	else{
+
+
+
 		this.state('stay');
 		this.timer = -1;
 	}
-	this.timer++;
+	this.timer+=this.freqAnim;
+
+
+
+	this.timer+=this.freqAnim;
 
 	ctx.lineWidth=8;
 	ctx.beginPath();
