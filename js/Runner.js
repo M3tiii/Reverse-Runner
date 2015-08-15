@@ -1,5 +1,5 @@
 function Runner(){
-	this.size = V.H/30;
+	this.size = V.H/10;
 	this.x = V.W/2;
 	this.y = V.H/2;
 	this.up = 20
@@ -78,10 +78,10 @@ Runner.prototype.state = function(type){
 			this.rightArmY = this.upBodyY+this.size/3.5;
 
 			this.leftHandX = this.x;
-			this.leftHandY = this.upBodyY+this.size/2.5;
+			this.leftHandY = this.upBodyY+this.size/2.2;
 
 			this.rightHandX = this.x;
-			this.rightHandY = this.upBodyY+this.size/2.5;
+			this.rightHandY = this.upBodyY+this.size/2.2;
 			break;
 	}
 }
@@ -94,9 +94,9 @@ Runner.prototype.move = function(type){
 			this.rotate("right","Knee",-8);
 			this.rotate("right","Feet",-12);
 
-			this.rotate("right","Arm",-5);
+			this.rotate("right","Arm",-6);
 			this.rotate("right","Hand",-5);
-			this.rotate("left","Arm",5);
+			this.rotate("left","Arm",6);
 			this.rotate("left","Hand",12);
 			
 			break;
@@ -106,9 +106,9 @@ Runner.prototype.move = function(type){
 			this.rotate("right","Knee",8);
 			this.rotate("right","Feet",+12);
 
-			this.rotate("right","Arm",5);
+			this.rotate("right","Arm",6);
 			this.rotate("right","Hand",5);
-			this.rotate("left","Arm",-5);
+			this.rotate("left","Arm",-6);
 			this.rotate("left","Hand",-12);
 			break;
 		
@@ -128,7 +128,7 @@ Runner.prototype.draw = function(){
 	}
 	this.timer++;
 
-	ctx.lineWidth=1;
+	ctx.lineWidth=8;
 	ctx.beginPath();
 	//Left leg
 	ctx.moveTo(this.leftFeetX, this.leftFeetY);
@@ -143,6 +143,7 @@ Runner.prototype.draw = function(){
 	ctx.lineTo(this.upBodyX,this.upBodyY);
 
 	//Left arm
+	ctx.moveTo(this.upBodyX,this.upBodyY);
 	ctx.lineTo(this.leftArmX, this.leftArmY);
 	//Left hand
 	//ctx.moveTo(this.upBodyX,this.upBodyY+this.size/4);
