@@ -1,38 +1,44 @@
-function Obstacle(type, collision, color){
+function Obstacle(type, layer){
 	this.size = V.scale/2;
-	this.x = V.W/2+400+V.rand(0,1000);
+	this.layer = layer-1;
+	this.x = V.W/2+400+V.rand(0,500);
 	this.y = V.H/2;
-	this.collision = collision;
-	this.color = color;
+	this.collision = false;
+	//this.color = color;
 	this.type = type;
 	this.shapes = {
-		rectangle: [1,0, 1,90, 1,180],
-		triangle: [2,0, 2,120],
-		triangle2: [2,0, 2,-120],
+		rectangle: [4,0,-1,-5,	1,0, 1,90, 1,180],
+		triangle:  [5,0,0,-5,	2,0, 2, (this.layer % 2 ? 1 : -1) * 120],
 	}
-	this.object = this.shapes[this.type];	
+	this.object = this.shapes[this.type];
+	this.y -= this.object[this.layer] * this.size;
+	this.vertex = [{x:this.x,y:this.y}];
+	
 }
 
 
 Obstacle.prototype.draw = function(){
-
+	this.collision = false;
+	if(Math.abs(this.x+this.size/2 - V.W/2) < this.size*2){
+		this.collision = true;
+	}
 	this.x-=4;
 	ctx.lineWidth=10;
-	ctx.fillStyle = this.color;
-	ctx.strokeStyle = "black"
+	this.layer <= 1 ? ctx.fillStyle = "black" : ctx.fillStyle = "white";
+	//ctx.strokeStyle = "black"
 	ctx.beginPath();
 
 	ctx.moveTo(this.x, this.y);
 	var actualX = this.x;
 	var actualY = this.y;
-		for(var i=0; i < this.object.length; i+=2){
+	this.vertex = [ {x:this.x,y:this.y} ];
+		for(var i=4; i < this.object.length; i+=2){
 			//console.log(actualX, actualY);
 			var tmp = V.rotate(actualX, actualY, this.object[i+1], actualX+this.size*this.object[i],actualY);
+			this.vertex.push({x:tmp.x, y:tmp.y});
 			actualX = tmp.x;
 			actualY = tmp.y;
-			
-			ctx.lineTo(actualX, actualY);
-
+			ctx.lineTo(tmp.x, tmp.y);
 		}
 	ctx.closePath();
 	ctx.fill();

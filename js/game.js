@@ -36,6 +36,7 @@ V = {
     H:0,
     fps:60+10,
     scale: 50,
+    alive: true,
     obstacles: [],
     rand:function(min,max){
       return Math.floor(Math.random()*(max-min+1))+min;
@@ -64,8 +65,12 @@ Game = {
     document.body.appendChild(canvas);
     window.addEventListener('keydown', Game.onKey, false);
 
-    V.obstacles[0] = new Obstacle('triangle', true, 'black');
-    V.obstacles[1] = new Obstacle('triangle2', true, 'white');
+    V.obstacles[0] = new Obstacle('triangle', 1);
+    V.obstacles[1] = new Obstacle('triangle', 1);
+    V.obstacles[2] = new Obstacle('triangle', 4);
+    V.obstacles[3] = new Obstacle('triangle', 4);
+
+
     Word =  new Word();
     Player = new Runner();
     Player.draw();
@@ -86,12 +91,11 @@ Game = {
   play: function(){
     setTimeout(function() {
         window.requestAnimationFrame(Game.play);
-        ctx.clearRect(0,0,V.W,V.H);
         
         //PLAY LOOP
-        
+        Word.drawBackground();
         for(var i in V.obstacles){
-          Word.draw(i);
+          Word.manageObstacle(i);
         }
         Player.draw();
         

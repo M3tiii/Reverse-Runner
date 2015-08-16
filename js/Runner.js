@@ -3,17 +3,26 @@ function Runner(){
 	this.x = V.W/2;
 	this.y = V.H/2;
 	this.invert = false;
-	this.prevInvert = false;
+	this.jump = false;
 	
-	this.state('stay');
 	this.timer = 0;
 	this.jumpTimer = 0;
-	this.jump = false;
-	this.jumpSpeed = this.size/20;
+	this.jumpPower = this.size/20;
 
-	this.freqAnim = 1;
-	this.boost = 1;
-	this.maxAnim = 10/this.boost;
+	this.jumpFreq = 1.34;
+	this.runFreq = 1;
+	this.boostFreq = 1;
+
+	this.maxAnim = 10/this.boostFreq;
+
+	this.fillStyle = "black";
+	this.strokeStyle = "black";
+
+	// this.parts = ["leftFeet","leftKnee",
+	// 			 "rightFeet","rightKnee",
+	// 			 "leftHand","leftArm",
+	// 			 "rightHand","rightArm",
+	// 			 "downBody","midBody","upBody"]
 
 	this.bodies = {
 		name:["Feet","Knee","downBody","Hand","Arm","upBody"],
@@ -30,25 +39,31 @@ function Runner(){
 }
 Runner.prototype.key = function(type){
 	//32 SPACE, 38 UP, 40 DOWN
+	//console.log(type);
 	if(type == 38 && this.jump == false){
-		
 		this.invert ? 
 					this.invert = false
 					: 
-					this.jump = true,
-					this.state('stay')
+					(this.jump = true,
+					this.state('stay') )
 			
 			
 	}
 	if(type == 40 && this.jump == false){
-		
 		this.invert ? 
 					(this.jump = true,
 					this.state('stay') )
 					: 
 					this.invert = true
 	}
-
+	// if(type == 37)
+	// 	V.obstacles[0].x-=3;
+	// if(type == 39)
+	// 	V.obstacles[0].x+=3;
+	// if(type == 38)
+	// 	V.obstacles[0].y-=3;
+	// if(type == 40)
+	// 	V.obstacles[0].y+=3;
 }
 Runner.prototype.inverting = function(){
 	ctx.save();
@@ -61,11 +76,11 @@ Runner.prototype.shift = function(side, prev, sx, sy){
 
 }
 Runner.prototype.rotate = function(side, part, angle){
-		if(part == "Body"){
+	if(part == "Body"){
 
-		var tmp = V.rotate( this.midBodyX, this.midBodyY, angle, this.upBodyX, this.upBodyY );
-		this.upBodyX = tmp.x;
-		this.upBodyY = tmp.y;
+	var tmp = V.rotate( this.midBodyX, this.midBodyY, angle, this.upBodyX, this.upBodyY );
+	this.upBodyX = tmp.x;
+	this.upBodyY = tmp.y;
 	}else{
 		var next = this.bodies.name[this.bodies[part]+1];
 		var prev = this.bodies.name[this.bodies[part]-1];
@@ -120,6 +135,9 @@ Runner.prototype.state = function(type){
 
 			this.rightHandX = this.x;
 			this.rightHandY = this.upBodyY+this.size/2.2;
+
+			//this.HeadX = this.upBodyX +this.size/16;
+			//this.HeadY = this.upBodyY-this.size/8;
 			break;
 	}
 }
@@ -190,12 +208,12 @@ Runner.prototype.move = function(type, i){
 			this.rotate("left","Hand",10 * i);
 			break;
 		case "jump":
-			this.rotate("left","Knee",-8 * i);
-			this.rotate("left","Feet",-10 * i);
+			this.rotate("left","Knee",-7 * i);
+			this.rotate("left","Feet",-8 * i);
 			this.rotate("right","Knee",-5 * i);
 			this.rotate("right","Feet",-8 * i);
 
-			//this.rotate("","Body",-1);
+			this.rotate("","Body",1.5*i);
 
 			this.rotate("right","Arm",5 * i);
 			this.rotate("right","Hand",10 * i);
@@ -204,40 +222,52 @@ Runner.prototype.move = function(type, i){
 			break;
 	}
 }
+Runner.prototype.checkCollision = function(obstacle){
+	for(var o in obstacle.vertex){
+		if(Math.abs(obstacle.vertex[o].x - this.midBodyX) < V.scale/6){
+			if(Math.abs(obstacle.vertex[o].y - (this.midBodyY + this.size/5*(this.invert ? 1 : -1)*this.jump + (V.H/2-this.midBodyY)*this.invert*2) ) < V.scale/2 - V.scale/8*this.jump)
+				V.alive = false;
+		}
+	}
+}
 Runner.prototype.draw = function(){
+	//ctx.lineWidth = 1;
+	//ctx.strokeStyle = "red";
+	//ctx.strokeRect(this.midBodyX-V.scale/6,(this.midBodyY+this.size/20*(this.invert ? 1 : -1)*this.jump + (V.H/2-this.midBodyY)*this.invert*2) - V.scale/2 ,V.scale/3, V.scale/1 - V.scale/4*this.jump)
 	if(this.jump){
 		if(this.jumpTimer < this.maxAnim*2){
-			this.updatePosition(0,-this.jumpSpeed*this.boost);
-			this.move("jump" , 1 * this.boost);
+			this.updatePosition(0,-this.jumpPower*this.boostFreq*1*this.jumpFreq);
+			this.move("jump" , 1*this.jumpFreq * this.boostFreq);
 		}else if(this.jumpTimer < this.maxAnim*3){
 			
 		}else if(this.jumpTimer < this.maxAnim*5){
-			this.updatePosition(0,this.jumpSpeed*this.boost);
-			this.move("jump" , -1 * this.boost);
+			this.updatePosition(0,this.jumpPower*this.boostFreq*1*this.jumpFreq);
+			this.move("jump" , -1*this.jumpFreq * this.boostFreq);
 		}else{
 			this.jump = false;
-			this.jumpTimer = -1;
+			this.jumpTimer = -1*this.jumpFreq;
 		}
-		this.jumpTimer+=1;
+		this.jumpTimer += 1 * this.jumpFreq;
 	}
 	else if(this.timer<this.maxAnim)
-		this.move("run" , 1 * this.boost);
+		this.move("run" , 1 * this.boostFreq * this.runFreq);
 	else if(this.timer<this.maxAnim*2)
-		this.move("run", -1 * this.boost);
+		this.move("run", -1 * this.boostFreq * this.runFreq);
 	else{
 		this.state('stay');
-		this.timer = -1;
+		this.timer = -1 * this.runFreq;
 	}
 
-	this.timer+=this.freqAnim;
+	this.timer += 1 * this.runFreq;
 
 	if(this.invert){
 		this.inverting();
-		ctx.fillStyle = "white";
-		ctx.strokeStyle = "white";
-		
+		this.fillStyle = "white";
+		this.strokeStyle = "white";
+	}else{
+		this.fillStyle = "black";
+		this.strokeStyle = "black";
 	}
-
 
 	ctx.lineWidth = this.size/10;
 	
@@ -253,12 +283,10 @@ Runner.prototype.draw = function(){
 	//Body
 	ctx.lineTo(this.midBodyX,this.midBodyY);
 	ctx.lineTo(this.upBodyX,this.upBodyY);
-
 	//Left arm
 	ctx.moveTo(this.upBodyX,this.upBodyY);
 	ctx.lineTo(this.leftArmX, this.leftArmY);
 	//Left hand
-	//ctx.moveTo(this.upBodyX,this.upBodyY+this.size/4);
 	ctx.lineTo(this.leftHandX, this.leftHandY);
 	//Right arm
 	ctx.moveTo(this.upBodyX,this.upBodyY);
@@ -266,13 +294,16 @@ Runner.prototype.draw = function(){
 	//Right hand
 	ctx.lineTo(this.rightHandX, this.rightHandY);
 
+	ctx.strokeStyle = this.strokeStyle;
 	ctx.stroke();
 
 	//Head
 	ctx.beginPath();
 	ctx.arc(this.upBodyX+this.size/16,this.upBodyY-this.size/8,this.size/8,0,2*Math.PI);
-
+	
+	ctx.fillStyle = this.fillStyle;
 	ctx.fill();
+
 	ctx.restore();
 }
 
