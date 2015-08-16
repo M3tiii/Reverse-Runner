@@ -65,6 +65,7 @@ Game = {
     window.addEventListener('keydown', Game.onKey, false);
 
     V.obstacles[0] = new Obstacle('triangle', true, 'black');
+    V.obstacles[1] = new Obstacle('triangle2', true, 'white');
     Word =  new Word();
     Player = new Runner();
     Player.draw();
@@ -88,11 +89,12 @@ Game = {
         ctx.clearRect(0,0,V.W,V.H);
         
         //PLAY LOOP
-        Player.draw();
+        
         for(var i in V.obstacles){
-          V.obstacles[i].draw();
+          Word.draw(i);
         }
-        Word.draw();
+        Player.draw();
+        
 
 
     }, 1000/V.fps);

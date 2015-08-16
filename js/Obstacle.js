@@ -1,6 +1,6 @@
 function Obstacle(type, collision, color){
 	this.size = V.scale/2;
-	this.x = V.W/2+200;
+	this.x = V.W/2+400+V.rand(0,1000);
 	this.y = V.H/2;
 	this.collision = collision;
 	this.color = color;
@@ -19,6 +19,7 @@ Obstacle.prototype.draw = function(){
 	this.x-=4;
 	ctx.lineWidth=10;
 	ctx.fillStyle = this.color;
+	ctx.strokeStyle = "black"
 	ctx.beginPath();
 
 	ctx.moveTo(this.x, this.y);
@@ -34,5 +35,5 @@ Obstacle.prototype.draw = function(){
 
 		}
 	ctx.closePath();
-	ctx.stroke();
+	ctx.fill();
 }
