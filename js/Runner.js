@@ -2,12 +2,16 @@ function Runner(){
 	this.size = V.scale;
 	this.x = V.W/2;
 	this.y = V.H/2;
-	this.up = 20
+	//this.up = 20
 	this.state('stay');
 	this.timer = 0;
+	this.jumpTimer = 0;
+	this.jump = false;
+	this.jumpSpeed = this.size/20;
 
 	this.freqAnim = 1;
-	this.maxAnim = 10;
+	this.boost = 1;
+	this.maxAnim = 10/this.boost;
 
 	this.bodies = {
 		name:["Feet","Knee","downBody","Hand","Arm","upBody"],
@@ -21,6 +25,12 @@ function Runner(){
 
 	this.state('stay');
 		
+}
+Runner.prototype.key = function(type){
+	if(type == 38 && this.jump == false){
+		this.state('stay');
+		this.jump = true;
+	}
 }
 Runner.prototype.shift = function(side, prev, sx, sy){
 	this[side+prev+["X"]] += sx;
@@ -137,7 +147,6 @@ Runner.prototype.updatePosition = function(x, y){
 
 }
 Runner.prototype.move = function(type, i){
-	//console.log(V.H, this.size);
 	switch(type){
 		case "run":
 			this.rotate("left","Knee",8 * i);
@@ -145,7 +154,7 @@ Runner.prototype.move = function(type, i){
 			this.rotate("right","Knee",-8 * i);
 			this.rotate("right","Feet",-12 * i);
 
-			this.rotate("","Body",1 * i);
+			this.rotate("","Body",1.5 * i);
 			
 
 			this.rotate("right","Arm",-6 * i);
@@ -153,6 +162,20 @@ Runner.prototype.move = function(type, i){
 			this.rotate("left","Arm",6 * i);
 			this.rotate("left","Hand",12 * i);
 			
+			break;
+		case "run2":
+			this.rotate("left","Knee",7.5 * i);
+			this.rotate("left","Feet",2.5 * i);
+			this.rotate("right","Knee",-4 * i);
+			this.rotate("right","Feet",-7.5 * i);
+
+			this.rotate("","Body",1 * i);
+			
+
+			this.rotate("right","Arm",-3.5 * i);
+			this.rotate("right","Hand",-1 * i);
+			this.rotate("left","Arm",5 * i);
+			this.rotate("left","Hand",10 * i);
 			break;
 		case "jump":
 			this.rotate("left","Knee",-8 * i);
@@ -170,37 +193,36 @@ Runner.prototype.move = function(type, i){
 	}
 }
 Runner.prototype.draw = function(){
-	//this.x++;
-	
 
-	if(this.timer<this.maxAnim)
-		this.move("run" , 1);
-	else if(this.timer<this.maxAnim*2)
-		this.move("run", -1);
-	else if(this.timer<this.maxAnim*4){
-		this.updatePosition(0,-6);
-		this.move("jump" , 1);
-	}
-	else if(this.timer<this.maxAnim*6){
-	}
-	else if(this.timer<this.maxAnim*8){
-		this.updatePosition(0,6);
-		this.move("jump" , -1);
-	}
-	else{
+		if(this.jump){
+			if(this.jumpTimer < this.maxAnim*2){
+				this.updatePosition(0,-this.jumpSpeed*this.boost);
+				this.move("jump" , 1 * this.boost);
+			}else if(this.jumpTimer < this.maxAnim*3){
+				
+			}else if(this.jumpTimer < this.maxAnim*5){
+				this.updatePosition(0,this.jumpSpeed*this.boost);
+				this.move("jump" , -1 * this.boost);
+			}else{
+				this.jump = false;
+				this.jumpTimer = -1;
+			}
+			this.jumpTimer+=1;
+		}
+		else if(this.timer<this.maxAnim)
+			this.move("run" , 1 * this.boost);
+		else if(this.timer<this.maxAnim*2)
+			this.move("run", -1 * this.boost);
+		else{
+			this.state('stay');
+			this.timer = -1;
+		}
+
+		this.timer+=this.freqAnim;
 
 
-
-		this.state('stay');
-		this.timer = -1;
-	}
-	this.timer+=this.freqAnim;
-
-
-
-	this.timer+=this.freqAnim;
-
-	ctx.lineWidth=8;
+	ctx.lineWidth = this.size/10;
+	ctx.fillStyle = "black";
 	ctx.beginPath();
 	//Left leg
 	ctx.moveTo(this.leftFeetX, this.leftFeetY);

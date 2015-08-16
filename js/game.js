@@ -36,14 +36,15 @@ V = {
     H:0,
     fps:60+10,
     scale: 50,
+    obstacles: [],
     rand:function(min,max){
       return Math.floor(Math.random()*(max-min+1))+min;
     },
     rotate:function(ox,oy,angle, px, py){
       
       angle = (-angle) * (Math.PI/180);
-      nx = Math.round(Math.cos(angle) * (px-ox) - Math.sin(angle) * (py-oy) + ox);
-      ny = Math.round(Math.sin(angle) * (px-ox) + Math.cos(angle) * (py-oy) + oy);
+      nx = Math.round((Math.cos(angle) * (px-ox) - Math.sin(angle) * (py-oy) + ox)*100)/100;
+      ny = Math.round((Math.sin(angle) * (px-ox) + Math.cos(angle) * (py-oy) + oy)*100)/100;
       //console.log(ox,oy,angle, px, py, "Wynik", nx, ny);
       return {x:nx, y:ny};
     },
@@ -63,9 +64,10 @@ Game = {
     document.body.appendChild(canvas);
     window.addEventListener('keydown', Game.onKey, false);
 
-    object = new Obstacle('rectangle');
-    tester = new Runner();
-    tester.draw();
+    V.obstacles[0] = new Obstacle('triangle', true, 'black');
+    Word =  new Word();
+    Player = new Runner();
+    Player.draw();
 
     Game.play();
   },
@@ -77,17 +79,20 @@ Game = {
     canvas.height = V.H;
   },
 
-  onKey: function(){
-
+  onKey: function(ev){
+    Player.key(ev.keyCode);
   },
   play: function(){
     setTimeout(function() {
         window.requestAnimationFrame(Game.play);
         ctx.clearRect(0,0,V.W,V.H);
-        ctx.strokeRect(V.W/2-200, V.H/2, 400, 100);
+        
         //PLAY LOOP
-        tester.draw();
-        object.draw();
+        Player.draw();
+        for(var i in V.obstacles){
+          V.obstacles[i].draw();
+        }
+        Word.draw();
 
 
     }, 1000/V.fps);
