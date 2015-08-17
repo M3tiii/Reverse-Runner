@@ -3,5 +3,6 @@ bower_components/
 *.log
 .DS_Store
 
-build/
 dist/
+Reverse-Runner/
+Reverse-Runner.zip
