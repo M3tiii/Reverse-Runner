@@ -37,6 +37,7 @@ V = {
     fps:60+10,
     scale: 50,
     alive: true,
+    score: 0,
     obstacles: [],
     rand:function(min,max){
       return Math.floor(Math.random()*(max-min+1))+min;
@@ -67,8 +68,10 @@ Game = {
 
     V.obstacles[0] = new Obstacle('triangle', 1);
     V.obstacles[1] = new Obstacle('triangle', 1);
-    V.obstacles[2] = new Obstacle('triangle', 4);
+    V.obstacles[2] = new Obstacle('triangle', 1);
     V.obstacles[3] = new Obstacle('triangle', 4);
+    V.obstacles[4] = new Obstacle('triangle', 4);
+    V.obstacles[5] = new Obstacle('triangle', 4);
 
 
     Word =  new Word();

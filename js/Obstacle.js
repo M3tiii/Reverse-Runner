@@ -1,7 +1,7 @@
 function Obstacle(type, layer){
 	this.size = V.scale/2;
 	this.layer = layer-1;
-	this.x = V.W/2+400+V.rand(0,500);
+	this.x = V.W/2+300+V.rand(20,600);
 	this.y = V.H/2;
 	this.collision = false;
 	//this.color = color;
