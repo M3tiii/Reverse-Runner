@@ -96,7 +96,7 @@ Game = {
         window.requestAnimationFrame(Game.play);
         
         //PLAY LOOP
-        Word.drawBackground();
+        World.drawBackground();
         for(var i in V.obstacles){
           Word.manageObstacle(i);
         }

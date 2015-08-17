@@ -1,8 +1,8 @@
-function Word(){
+function World(){
 	this.size = V.scale;
 	ctx.font = "40px Arial";
 }
-Word.prototype.drawBackground = function(){
+World.prototype.drawBackground = function(){
 	ctx.fillStyle = "black";
 	ctx.fillRect(0,0,V.W,V.H/2);
 	ctx.fillRect(V.W/2-300, V.H/2, 600, V.scale*2.5);
@@ -25,7 +25,7 @@ Word.prototype.drawBackground = function(){
 
 }
 
-Word.prototype.manageObstacle = function(i){
+World.prototype.manageObstacle = function(i){
 	//DRAW
 	ctx.fillStyle = "black";
 	ctx.lineWidth = 4;
