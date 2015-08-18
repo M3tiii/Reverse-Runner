@@ -1,7 +1,7 @@
 function Obstacle(type, layer){
 	this.size = V.scale/2;
 	this.layer = layer-1;
-	this.x = V.W/2+300+V.rand(20,600);
+	this.x = V.W/2+this.size*12+V.rand(this.size,this.size*12);
 	this.y = V.H/2;
 	this.collision = false;
 	//this.color = color;
@@ -22,7 +22,7 @@ Obstacle.prototype.draw = function(){
 	if(Math.abs(this.x+this.size/2 - V.W/2) < this.size*2){
 		this.collision = true;
 	}
-	this.x-=4;
+	this.x-=this.size/6;
 	ctx.lineWidth=10;
 	this.layer <= 1 ? ctx.fillStyle = "black" : ctx.fillStyle = "white";
 	//ctx.strokeStyle = "black"

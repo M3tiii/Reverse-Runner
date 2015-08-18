@@ -39,6 +39,11 @@ function Runner(){
 }
 Runner.prototype.key = function(type){
 	//32 SPACE, 38 UP, 40 DOWN
+	if(type == 32){
+		Player.state('stay');
+		World.shopEnter = false;
+		//this.x = 1000;
+	}
 	//console.log(type);
 	if(type == 38 && this.jump == false){
 		this.invert ? 
@@ -128,6 +133,43 @@ Runner.prototype.state = function(type){
 			this.leftArmY = this.upBodyY+this.size/3.5;
 
 			this.rightArmX = this.x;
+			this.rightArmY = this.upBodyY+this.size/3.5;
+
+			this.leftHandX = this.x;
+			this.leftHandY = this.upBodyY+this.size/2.2;
+
+			this.rightHandX = this.x;
+			this.rightHandY = this.upBodyY+this.size/2.2;
+
+			//this.HeadX = this.upBodyX +this.size/16;
+			//this.HeadY = this.upBodyY-this.size/8;
+			break;
+		case 'free':
+			this.leftFeetX = this.x-this.size/4;
+			this.leftFeetY = this.y;
+
+			this.rightFeetX = this.x+this.size/4;
+			this.rightFeetY = this.y;
+
+			this.leftKneeX = this.x-this.size/8;
+			this.leftKneeY = this.y-this.size/4;
+
+			this.rightKneeX = this.x+this.size/8;
+			this.rightKneeY = this.y-this.size/4;
+
+			this.downBodyX = this.x;
+			this.downBodyY = this.y-this.size/1.8;
+
+			this.midBodyX = this.x;
+			this.midBodyY = this.y-this.size/1.4;
+
+			this.upBodyX = this.x;
+			this.upBodyY = this.y-this.size;
+
+			this.leftArmX = this.x-this.size/4;
+			this.leftArmY = this.upBodyY+this.size/3.5;
+
+			this.rightArmX = this.x+this.size/4;
 			this.rightArmY = this.upBodyY+this.size/3.5;
 
 			this.leftHandX = this.x;
@@ -230,10 +272,7 @@ Runner.prototype.checkCollision = function(obstacle){
 		}
 	}
 }
-Runner.prototype.draw = function(){
-	//ctx.lineWidth = 1;
-	//ctx.strokeStyle = "red";
-	//ctx.strokeRect(this.midBodyX-V.scale/6,(this.midBodyY+this.size/20*(this.invert ? 1 : -1)*this.jump + (V.H/2-this.midBodyY)*this.invert*2) - V.scale/2 ,V.scale/3, V.scale/1 - V.scale/4*this.jump)
+Runner.prototype.run = function(){
 	if(this.jump){
 		if(this.jumpTimer < this.maxAnim*2){
 			this.updatePosition(0,-this.jumpPower*this.boostFreq*1*this.jumpFreq);
@@ -259,6 +298,11 @@ Runner.prototype.draw = function(){
 	}
 
 	this.timer += 1 * this.runFreq;
+}
+Runner.prototype.draw = function(){
+	//ctx.lineWidth = 1;
+	//ctx.strokeStyle = "red";
+	//ctx.strokeRect(this.midBodyX-V.scale/6,(this.midBodyY+this.size/20*(this.invert ? 1 : -1)*this.jump + (V.H/2-this.midBodyY)*this.invert*2) - V.scale/2 ,V.scale/3, V.scale/1 - V.scale/4*this.jump)
 
 	if(this.invert){
 		this.inverting();
@@ -295,15 +339,16 @@ Runner.prototype.draw = function(){
 	ctx.lineTo(this.rightHandX, this.rightHandY);
 
 	ctx.strokeStyle = this.strokeStyle;
+	
 	ctx.stroke();
-
 	//Head
 	ctx.beginPath();
 	ctx.arc(this.upBodyX+this.size/16,this.upBodyY-this.size/8,this.size/8,0,2*Math.PI);
 	
 	ctx.fillStyle = this.fillStyle;
 	ctx.fill();
-
+	ctx.closePath();
+	//ctx.stroke();
 	ctx.restore();
 }
 

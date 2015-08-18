@@ -74,9 +74,10 @@ Game = {
     V.obstacles[5] = new Obstacle('triangle', 4);
 
 
-    Word =  new Word();
+    World =  new World();
     Player = new Runner();
     Player.draw();
+
 
     Game.play();
   },
@@ -96,13 +97,7 @@ Game = {
         window.requestAnimationFrame(Game.play);
         
         //PLAY LOOP
-        World.drawBackground();
-        for(var i in V.obstacles){
-          Word.manageObstacle(i);
-        }
-        Player.draw();
-        
-
+          World.manage();
 
     }, 1000/V.fps);
   },
