@@ -50,9 +50,9 @@ World.prototype.drawShop = function(m){
 	ctx.strokeText('Best 666', this.size*2.5/2, this.size/2+this.size/3);
 	ctx.restore();
 	if(this.x > V.W/2 + this.size && this.shopEnter){
-		this.x-=2*this.size/50;
+		this.x-=2*this.size/50*this.speed;
 	}else if(this.x > V.W/2 - this.size * 12 && !this.shopEnter){
-		this.x-=2*this.size/50;
+		this.x-=2*this.size/50*this.speed;
 		Player.run();
 		
 	}else if(this.x <= V.W/2 - this.size * 12){
@@ -84,6 +84,8 @@ World.prototype.manage = function(){
 	Player.boostSpeed(this.speed);
 	//console.log(Player.boostFreq);
 	this.drawBackground();
+	Player.run();
+	Player.draw();
 	if(this.shop){
 		Player.draw();
         this.drawShop(0);
@@ -103,8 +105,7 @@ World.prototype.manage = function(){
 			this.shopEnter = true;
 			V.alive = true;
 		}
-		Player.run();
-	    Player.draw();
+		
 	    
     }
 }
