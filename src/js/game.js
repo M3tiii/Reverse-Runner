@@ -39,6 +39,7 @@ V = {
     alive: true,
     score: 0,
     obstacles: [],
+    pieces: [],
     rand:function(min,max){
       return Math.floor(Math.random()*(max-min+1))+min;
     },
@@ -78,6 +79,8 @@ Game = {
     Player = new Runner();
     Player.draw();
 
+    for(var i=0; i<20; i++)
+    V.pieces[i] = new Piece();
 
     Game.play();
   },

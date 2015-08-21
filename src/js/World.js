@@ -1,5 +1,6 @@
 function World(){
 	this.size = V.scale;
+	this.speed = 1;
 	this.shop = false;
 	this.shopEnter = false;
 	this.days = 0;
@@ -49,9 +50,9 @@ World.prototype.drawShop = function(m){
 	ctx.strokeText('Best 666', this.size*2.5/2, this.size/2+this.size/3);
 	ctx.restore();
 	if(this.x > V.W/2 + this.size && this.shopEnter){
-		this.x-=2;
+		this.x-=2*this.size/50;
 	}else if(this.x > V.W/2 - this.size * 12 && !this.shopEnter){
-		this.x-=2;
+		this.x-=2*this.size/50;
 		Player.run();
 		
 	}else if(this.x <= V.W/2 - this.size * 12){
@@ -79,6 +80,9 @@ World.prototype.drawShop = function(m){
 
 }
 World.prototype.manage = function(){
+	this.speed += 0.0001;
+	Player.boostSpeed(this.speed);
+	//console.log(Player.boostFreq);
 	this.drawBackground();
 	if(this.shop){
 		Player.draw();
@@ -88,6 +92,9 @@ World.prototype.manage = function(){
 		if(this.shopEnter){
 			this.drawShop(0);
 		}
+		for(var i in V.pieces){
+	        this.managepieces(i);
+	    }
 		for(var i in V.obstacles){
 	        this.manageObstacle(i);
 	    }
@@ -98,18 +105,26 @@ World.prototype.manage = function(){
 		}
 		Player.run();
 	    Player.draw();
+	    
     }
 }
 World.prototype.manageObstacle = function(i){
-	if(V.obstacles[i].x < V.W/2-400){
+	if(V.obstacles[i].x < V.W/2-this.size*8){
 		V.score++;
 		V.obstacles[i] = new Obstacle(V.obstacles[i].type, V.rand(1,4));
 	}
-
+	V.obstacles[i].x -= 4*this.speed*this.size/50;
 	V.obstacles[i].draw();
 
 	//COLLISION
 	if(V.obstacles[i].collision == true && this.shopEnter == false){
 		Player.checkCollision(V.obstacles[i]);
+	}
+}
+World.prototype.managepieces = function(i){
+	V.pieces[i].x-= this.speed*this.size/50;
+	V.pieces[i]['draw'+V.pieces[i].color]();
+	if(V.pieces[i].x < V.W/2-this.size*8){
+		V.pieces[i] = new Piece();
 	}
 }

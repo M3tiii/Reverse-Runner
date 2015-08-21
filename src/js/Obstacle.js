@@ -22,7 +22,6 @@ Obstacle.prototype.draw = function(){
 	if(Math.abs(this.x+this.size/2 - V.W/2) < this.size*2){
 		this.collision = true;
 	}
-	this.x-=this.size/6;
 	ctx.lineWidth=10;
 	this.layer <= 1 ? ctx.fillStyle = "black" : ctx.fillStyle = "white";
 	//ctx.strokeStyle = "black"

@@ -37,6 +37,10 @@ function Runner(){
 	this.state('stay');
 		
 }
+Runner.prototype.boostSpeed = function(boost){
+	this.boostFreq = Math.round(boost*10)/10;
+	this.maxAnim = 10/this.boostFreq;
+}
 Runner.prototype.key = function(type){
 	//32 SPACE, 38 UP, 40 DOWN
 	if(type == 32){
@@ -82,10 +86,9 @@ Runner.prototype.shift = function(side, prev, sx, sy){
 }
 Runner.prototype.rotate = function(side, part, angle){
 	if(part == "Body"){
-
-	var tmp = V.rotate( this.midBodyX, this.midBodyY, angle, this.upBodyX, this.upBodyY );
-	this.upBodyX = tmp.x;
-	this.upBodyY = tmp.y;
+		var tmp = V.rotate( this.midBodyX, this.midBodyY, angle, this.upBodyX, this.upBodyY );
+		this.upBodyX = tmp.x;
+		this.upBodyY = tmp.y;
 	}else{
 		var next = this.bodies.name[this.bodies[part]+1];
 		var prev = this.bodies.name[this.bodies[part]-1];
@@ -123,10 +126,10 @@ Runner.prototype.state = function(type){
 			this.downBodyX = this.x;
 			this.downBodyY = this.y-this.size/1.8;
 
-			this.midBodyX = this.x+this.size/20;
+			this.midBodyX = this.x+this.size/20*this.boostFreq;
 			this.midBodyY = this.y-this.size/1.4;
 
-			this.upBodyX = this.x+this.size/6;
+			this.upBodyX = this.x+this.size/6*this.boostFreq;
 			this.upBodyY = this.y-this.size;
 
 			this.leftArmX = this.x;
@@ -267,8 +270,14 @@ Runner.prototype.move = function(type, i){
 Runner.prototype.checkCollision = function(obstacle){
 	for(var o in obstacle.vertex){
 		if(Math.abs(obstacle.vertex[o].x - this.midBodyX) < V.scale/6){
-			if(Math.abs(obstacle.vertex[o].y - (this.midBodyY + this.size/5*(this.invert ? 1 : -1)*this.jump + (V.H/2-this.midBodyY)*this.invert*2) ) < V.scale/2 - V.scale/8*this.jump)
+			if(Math.abs(obstacle.vertex[o].y - (this.midBodyY + this.size/5*(this.invert ? 1 : -1)*this.jump + (V.H/2-this.midBodyY)*this.invert*2) ) < V.scale/2 - V.scale/8*this.jump){
 				V.alive = false;
+				if(Math.abs(V.H/2-obstacle.vertex[o].y) > this.size){
+					console.log("głowa")
+				}else{
+					console.log("nogi")
+				}
+			}
 		}
 	}
 }
@@ -303,7 +312,6 @@ Runner.prototype.draw = function(){
 	//ctx.lineWidth = 1;
 	//ctx.strokeStyle = "red";
 	//ctx.strokeRect(this.midBodyX-V.scale/6,(this.midBodyY+this.size/20*(this.invert ? 1 : -1)*this.jump + (V.H/2-this.midBodyY)*this.invert*2) - V.scale/2 ,V.scale/3, V.scale/1 - V.scale/4*this.jump)
-
 	if(this.invert){
 		this.inverting();
 		this.fillStyle = "white";
